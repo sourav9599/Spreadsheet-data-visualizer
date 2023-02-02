@@ -7,7 +7,7 @@ import pandas as pd
 from app import app
 from flask import request, redirect, jsonify
 from werkzeug.utils import secure_filename
-from beaker.middleware import SessionMiddleware
+# from beaker.middleware import SessionMiddleware
 
 ALLOWED_EXTENSIONS = {'txt', 'csv', 'xlsx'}
 
@@ -17,21 +17,21 @@ session_opts = {
     'session.data_dir': './files',
     'session.auto': True
 }
-app.wsgi_app = SessionMiddleware(app.wsgi_app, session_opts)
+# app.wsgi_app = SessionMiddleware(app.wsgi_app, session_opts)
 
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route("/")
-def welcome():
-    session = request.environ['beaker.session']
-    if 'counter' in session:
-        session['counter'] += 1
-    else:
-        session['counter'] = 1
-    return f"<h1>Counter: {session['counter']}</h1>"
+# @app.route("/")
+# def welcome():
+#     session = request.environ['beaker.session']
+#     if 'counter' in session:
+#         session['counter'] += 1
+#     else:
+#         session['counter'] = 1
+#     return f"<h1>Counter: {session['counter']}</h1>"
 
 
 # @app.route('/login', methods=['POST'])
@@ -47,7 +47,7 @@ dataframes = {}
 
 @app.route("/data-head")
 def data():
-    session = request.environ['beaker.session']
+    # session = request.environ['beaker.session']
     session_id = request.cookies.get("session_id") if request.cookies.get("session_id") else ""
     if f"{session_id}_original" in dataframes and f"{session_id}_modified" in dataframes:
         original = dataframes[f"{session_id}_original"]
@@ -78,9 +78,9 @@ def data():
 @app.route('/file-upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        session = request.environ['beaker.session']
-        if 'files' not in session:
-            session['files'] = []
+        # session = request.environ['beaker.session']
+        # if 'files' not in session:
+        #     session['files'] = []
         # check if the post request has the file part
         if 'file' not in request.files:
             resp = jsonify({'message': 'No file part in the request'})
@@ -97,7 +97,8 @@ def upload_file():
             session_id = request.cookies.get("session_id") if request.cookies.get("session_id") else ""
             dataframes[f"{session_id}_original"] = df
             dataframes[f"{session_id}_modified"] = df
-            return df.to_html()
+            df = df.fillna("NULL")
+            return jsonify(df.to_dict(orient="records"))
             # file.save(os.path.join(app.config['UPLOAD_FOLDER'], f"{session.id}_{filename}"))
             # session['files'].append(f"{session.id}_{filename}")
             # session.save()
