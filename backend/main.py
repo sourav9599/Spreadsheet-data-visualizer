@@ -1,37 +1,22 @@
 import io
-import os
-import urllib.request
-import uuid
-
 import pandas as pd
 from app import app
-from flask import request, redirect, jsonify
-from werkzeug.utils import secure_filename
-# from beaker.middleware import SessionMiddleware
+from flask import request, jsonify
 
 ALLOWED_EXTENSIONS = {'txt', 'csv', 'xlsx'}
 
-session_opts = {
-    'session.type': 'file',
-    'session.cookie_expires': 300,
-    'session.data_dir': './files',
-    'session.auto': True
-}
-# app.wsgi_app = SessionMiddleware(app.wsgi_app, session_opts)
+dataframes = {}
 
+
+# session_opts = {
+#     'session.type': 'file',
+#     'session.cookie_expires': 300,
+#     'session.data_dir': './files',
+#     'session.auto': True
+# }
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-# @app.route("/")
-# def welcome():
-#     session = request.environ['beaker.session']
-#     if 'counter' in session:
-#         session['counter'] += 1
-#     else:
-#         session['counter'] = 1
-#     return f"<h1>Counter: {session['counter']}</h1>"
 
 
 # @app.route('/login', methods=['POST'])
@@ -42,7 +27,6 @@ def allowed_file(filename):
 #     # Save user data in the sessions dictionary
 #     sessions[token] = {'user': user}
 #     return jsonify({'token': token})
-dataframes = {}
 
 
 @app.route("/data-head")
@@ -53,7 +37,7 @@ def data():
         original = dataframes[f"{session_id}_original"]
         modified = original.head()
         dataframes[f"{session_id}_modified"] = modified
-        return modified.to_html()
+        return jsonify(modified.to_dict(orient="records"))
 
     else:
         resp = jsonify({'message': 'File not found. Please re-upload.'})
@@ -75,7 +59,7 @@ def data():
 #     return "Dataframe not found"
 
 
-@app.route('/file-upload', methods=['GET', 'POST'])
+@app.route('/file-upload', methods=['POST'])
 def upload_file():
     if request.method == 'POST':
         # session = request.environ['beaker.session']
@@ -95,9 +79,9 @@ def upload_file():
             # filename = secure_filename(file.filename)
             df = pd.read_csv(io.BytesIO(file.read()), encoding="ISO-8859-1", header=None)
             session_id = request.cookies.get("session_id") if request.cookies.get("session_id") else ""
+            df = df.fillna("NULL")
             dataframes[f"{session_id}_original"] = df
             dataframes[f"{session_id}_modified"] = df
-            df = df.fillna("NULL")
             return jsonify(df.to_dict(orient="records"))
             # file.save(os.path.join(app.config['UPLOAD_FOLDER'], f"{session.id}_{filename}"))
             # session['files'].append(f"{session.id}_{filename}")
@@ -109,18 +93,6 @@ def upload_file():
             resp = jsonify({'message': 'Allowed file types are txt, csv, xlsx'})
             resp.status_code = 400
             return resp
-    else:
-        return '''
-            <!doctype html>
-            <html>
-            <body>
-            <form action="" method=post enctype=multipart/form-data>
-                <input type=file name=file>
-                <input type=submit value=Upload>
-            </form>
-            </body>
-            </html>
-            '''
 
 
 if __name__ == "__main__":

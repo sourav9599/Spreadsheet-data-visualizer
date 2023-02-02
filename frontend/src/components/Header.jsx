@@ -39,7 +39,7 @@ const Header = () => {
     <input type="file" onChange={handleFileChange} />
     <button type="submit">Upload</button>
     </form>
-    <div style={{ overflow: "auto", maxHeight: "300px" }}>
+    <div style={{ overflow: "auto" }}>
       {/* <JSONTable 
       data = {table}/> */}
       <DataTable
