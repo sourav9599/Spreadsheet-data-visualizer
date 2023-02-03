@@ -67,12 +67,12 @@ def upload_file():
         #     session['files'] = []
         # check if the post request has the file part
         if 'file' not in request.files:
-            resp = jsonify({'message': 'No file part in the request'})
+            resp = jsonify({'message': 'Please upload a file!!'})
             resp.status_code = 400
             return resp
         file = request.files['file']
         if file.filename == '':
-            resp = jsonify({'message': 'No file selected for uploading'})
+            resp = jsonify({'message': 'File not found for processing'})
             resp.status_code = 400
             return resp
         if file and allowed_file(file.filename):

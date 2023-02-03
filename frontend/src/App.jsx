@@ -1,10 +1,9 @@
-import Header from './components/Header'
-import styled from 'styled-components'
+import Header from "./components/Header";
 
 export default function App() {
-  return (
-    <main>
-      <Header />
-    </main>
-  )
+	return (
+		<main>
+			<Header />
+		</main>
+	);
 }
