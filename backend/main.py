@@ -33,7 +33,7 @@ def allowed_file(filename):
 
 @app.route("/describe-data", methods=['GET'])
 def data():
-    session_id = request.headers['session_id']
+    session_id = request.args.get('session_id')
     head_value = request.args.get('head')
     if session_id in original_dataframes and session_id in modified_dataframes:
         original = original_dataframes[session_id]
@@ -59,7 +59,6 @@ def read_data(file_extension: str, file, has_header):
 
 @app.route('/file-upload', methods=['POST'])
 def upload_file():
-    print(request.headers)
     if 'file' not in request.files:
         resp = jsonify({'message': 'Please upload a file!!'})
         resp.status_code = 400
@@ -76,7 +75,7 @@ def upload_file():
             return resp
         session_id = generate_unique_id()
         file_extension = file.filename.rsplit('.', 1)[1].lower()
-        df = read_data(file_extension, file, 'true')
+        df = read_data(file_extension, file, request.args.get('hasHeader'))
         # remove the oldest dataframe if the limit is reached
         if len(original_dataframes) > app.config['MAX_DF_COUNT']:
             original_dataframes.pop(next(iter(original_dataframes)))

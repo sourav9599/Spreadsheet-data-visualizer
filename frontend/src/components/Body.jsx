@@ -24,14 +24,15 @@ const Body = () => {
 		event.preventDefault();
 		const formData = new FormData();
 		formData.append("file", file);
-		const headers = {
+		const params = {
 			hasHeader: isHeaderPresent,
 		};
 		try {
 			const response = await axios.post(
-				"http://127.0.0.1:5000/file-upload",
-				formData,
-				{ headers: headers }
+				"http://127.0.0.1:5000/file-upload" +
+					"?" +
+					new URLSearchParams(params).toString(),
+				formData
 			);
 			setTable(response.data["data"]);
 			setIsUploaded(true);
