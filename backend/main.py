@@ -58,9 +58,25 @@ def describe_data():
 @app.route("/sort-data", methods=['POST'])
 def sort_data():
     session_id = request.args.get('session_id')
+    column_names = request.get_json()
     if session_id in original_dataframes and session_id in modified_dataframes:
         original = original_dataframes[session_id]
-        modified = original.sort_values(by='Name')
+        modified = original.sort_values(by=column_names)
+        modified_dataframes[session_id] = modified
+        return jsonify(modified.fillna("NULL").to_dict(orient="records"))
+    else:
+        resp = jsonify({'message': 'File not found. Please re-upload.'})
+        resp.status_code = 400
+        return resp
+
+
+@app.route("/sort-data", methods=['POST'])
+def fill_null_values():
+    session_id = request.args.get('session_id')
+    column_names = request.get_json()
+    if session_id in original_dataframes and session_id in modified_dataframes:
+        original = original_dataframes[session_id]
+        modified = original.sort_values(by=column_names)
         modified_dataframes[session_id] = modified
         return jsonify(modified.fillna("NULL").to_dict(orient="records"))
     else:
