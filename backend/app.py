@@ -9,3 +9,4 @@ app.config["DEBUG"] = True
 # UPLOAD_FOLDER = 'files'
 # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+app.config['MAX_DF_COUNT'] = 100

@@ -1,19 +1,21 @@
 import io
+import uuid
+
 import pandas as pd
 from app import app
 from flask import request, jsonify
 
-ALLOWED_EXTENSIONS = {'txt', 'csv', 'xlsx'}
+# from flask_sslify import SSLify
+# sslify = SSLify(app)
+ALLOWED_EXTENSIONS = {'csv', 'xlsx', "xls", "xlsm", 'xlsb', 'odf', 'ods', 'odt'}
 
-dataframes = {}
+original_dataframes, modified_dataframes = {}, {}
 
 
-# session_opts = {
-#     'session.type': 'file',
-#     'session.cookie_expires': 300,
-#     'session.data_dir': './files',
-#     'session.auto': True
-# }
+def generate_unique_id():
+    # Generate a unique identifier for the user session
+    return str(uuid.uuid4())
+
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -29,15 +31,15 @@ def allowed_file(filename):
 #     return jsonify({'token': token})
 
 
-@app.route("/data-head")
+@app.route("/describe-data", methods=['GET'])
 def data():
-    # session = request.environ['beaker.session']
-    session_id = request.cookies.get("session_id") if request.cookies.get("session_id") else ""
-    if f"{session_id}_original" in dataframes and f"{session_id}_modified" in dataframes:
-        original = dataframes[f"{session_id}_original"]
-        modified = original.head()
-        dataframes[f"{session_id}_modified"] = modified
-        return jsonify(modified.to_dict(orient="records"))
+    session_id = request.headers['session_id']
+    head_value = request.args.get('head')
+    if session_id in original_dataframes and session_id in modified_dataframes:
+        original = original_dataframes[session_id]
+        modified = original.head(head_value)
+        modified_dataframes[session_id] = modified
+        return jsonify(modified.fillna("NULL").to_dict(orient="records"))
 
     else:
         resp = jsonify({'message': 'File not found. Please re-upload.'})
@@ -45,54 +47,53 @@ def data():
         return resp
 
 
-# @app.route("/data-plot")
-# def plot_dataframe(session_id):
-#     df = dataframes.get(session_id)
-#     if df is not None:
-#         fig = Figure()
-#         ax = fig.add_subplot(111)
-#         df.plot(kind="line", ax=ax)
-#         canvas = FigureCanvas(fig)
-#         output = io.BytesIO()
-#         canvas.print_png(output)
-#         return output.getvalue(), 200, {"Content-Type": "image/png"}
-#     return "Dataframe not found"
+def read_data(file_extension: str, file, has_header):
+    header: int | None = 0 if has_header == "true" else None
+    df = None
+    if file_extension == 'csv':
+        df = pd.read_csv(io.BytesIO(file.read()), header=header)
+    if file_extension in ['xlsx', "xls", "xlsm", 'xlsb', 'odf', 'ods', 'odt']:
+        df = pd.read_excel(io.BytesIO(file.read()), header=header)
+    return df
 
 
 @app.route('/file-upload', methods=['POST'])
 def upload_file():
-    if request.method == 'POST':
-        # session = request.environ['beaker.session']
-        # if 'files' not in session:
-        #     session['files'] = []
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            resp = jsonify({'message': 'Please upload a file!!'})
+    print(request.headers)
+    if 'file' not in request.files:
+        resp = jsonify({'message': 'Please upload a file!!'})
+        resp.status_code = 400
+        return resp
+    file = request.files['file']
+    if file.filename == '':
+        resp = jsonify({'message': 'File not found for processing'})
+        resp.status_code = 400
+        return resp
+    if file and allowed_file(file.filename):
+        if file.content_length > app.config['MAX_CONTENT_LENGTH']:
+            resp = jsonify({'message': '"File size exceeded limit."'})
             resp.status_code = 400
             return resp
-        file = request.files['file']
-        if file.filename == '':
-            resp = jsonify({'message': 'File not found for processing'})
-            resp.status_code = 400
-            return resp
-        if file and allowed_file(file.filename):
-            # filename = secure_filename(file.filename)
-            df = pd.read_csv(io.BytesIO(file.read()), encoding="ISO-8859-1", header=None)
-            session_id = request.cookies.get("session_id") if request.cookies.get("session_id") else ""
-            df = df.fillna("NULL")
-            dataframes[f"{session_id}_original"] = df
-            dataframes[f"{session_id}_modified"] = df
-            return jsonify(df.to_dict(orient="records"))
-            # file.save(os.path.join(app.config['UPLOAD_FOLDER'], f"{session.id}_{filename}"))
-            # session['files'].append(f"{session.id}_{filename}")
-            # session.save()
-            # resp = jsonify({'message': 'File successfully uploaded'})
-            # resp.status_code = 201
-            # return resp
-        else:
-            resp = jsonify({'message': 'Allowed file types are txt, csv, xlsx'})
-            resp.status_code = 400
-            return resp
+        session_id = generate_unique_id()
+        file_extension = file.filename.rsplit('.', 1)[1].lower()
+        df = read_data(file_extension, file, 'true')
+        # remove the oldest dataframe if the limit is reached
+        if len(original_dataframes) > app.config['MAX_DF_COUNT']:
+            original_dataframes.pop(next(iter(original_dataframes)))
+        if len(modified_dataframes) > app.config['MAX_DF_COUNT']:
+            modified_dataframes.pop(next(iter(modified_dataframes)))
+
+        original_dataframes[session_id] = df
+        modified_dataframes[session_id] = df
+        df = df.fillna("NULL")
+        return jsonify({
+            "session_id": session_id,
+            "data": df.to_dict(orient="records")
+        })
+    else:
+        resp = jsonify({'message': 'Allowed file types are txt, csv, xlsx'})
+        resp.status_code = 400
+        return resp
 
 
 if __name__ == "__main__":
