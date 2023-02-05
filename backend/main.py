@@ -17,6 +17,16 @@ def generate_unique_id():
     return str(uuid.uuid4())
 
 
+def read_data(file_extension: str, file, has_header):
+    header: int | None = 0 if has_header == "true" else None
+    df = None
+    if file_extension == 'csv':
+        df = pd.read_csv(io.BytesIO(file.read()), header=header)
+    if file_extension in ['xlsx', "xls", "xlsm", 'xlsb', 'odf', 'ods', 'odt']:
+        df = pd.read_excel(io.BytesIO(file.read()), header=header)
+    return df
+
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -32,29 +42,31 @@ def allowed_file(filename):
 
 
 @app.route("/describe-data", methods=['GET'])
-def data():
+def describe_data():
     session_id = request.args.get('session_id')
-    head_value = request.args.get('head')
     if session_id in original_dataframes and session_id in modified_dataframes:
         original = original_dataframes[session_id]
-        modified = original.head(head_value)
+        modified = original.describe()
         modified_dataframes[session_id] = modified
-        return jsonify(modified.fillna("NULL").to_dict(orient="records"))
-
+        return jsonify(modified.to_dict(orient="records"))
     else:
         resp = jsonify({'message': 'File not found. Please re-upload.'})
         resp.status_code = 400
         return resp
 
 
-def read_data(file_extension: str, file, has_header):
-    header: int | None = 0 if has_header == "true" else None
-    df = None
-    if file_extension == 'csv':
-        df = pd.read_csv(io.BytesIO(file.read()), header=header)
-    if file_extension in ['xlsx', "xls", "xlsm", 'xlsb', 'odf', 'ods', 'odt']:
-        df = pd.read_excel(io.BytesIO(file.read()), header=header)
-    return df
+@app.route("/sort-data", methods=['POST'])
+def sort_data():
+    session_id = request.args.get('session_id')
+    if session_id in original_dataframes and session_id in modified_dataframes:
+        original = original_dataframes[session_id]
+        modified = original.sort_values(by='Name')
+        modified_dataframes[session_id] = modified
+        return jsonify(modified.fillna("NULL").to_dict(orient="records"))
+    else:
+        resp = jsonify({'message': 'File not found. Please re-upload.'})
+        resp.status_code = 400
+        return resp
 
 
 @app.route('/file-upload', methods=['POST'])

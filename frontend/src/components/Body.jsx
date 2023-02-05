@@ -44,7 +44,7 @@ const Body = () => {
 	const columns = React.useMemo(
 		() =>
 			Object.keys(table[0] || {}).map((key) => ({
-				name: `Column ${key}`,
+				name: !isHeaderPresent ? `Column ${key}` : key,
 				selector: key,
 				sortable: true,
 			})),
