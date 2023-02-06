@@ -47,6 +47,7 @@ def describe_data():
     if session_id in original_dataframes and session_id in modified_dataframes:
         original = original_dataframes[session_id]
         modified = original.describe()
+        modified = modified.reset_index(level=0)
         modified_dataframes[session_id] = modified
         return jsonify(modified.to_dict(orient="records"))
     else:
@@ -55,13 +56,26 @@ def describe_data():
         return resp
 
 
-@app.route("/sort-data", methods=['POST'])
+@app.route("/load-original", methods=['GET'])
+def load_original_data():
+    session_id = request.args.get('session_id')
+    if session_id in original_dataframes and session_id in modified_dataframes:
+        return jsonify(original_dataframes[session_id].to_dict(orient="records"))
+    else:
+        resp = jsonify({'message': 'File not found. Please re-upload.'})
+        resp.status_code = 400
+        return resp
+
+
+@app.route("/view-columns", methods=['POST'])
 def sort_data():
     session_id = request.args.get('session_id')
-    column_names = request.get_json()
+    column_names = request.get_json()['columns']
     if session_id in original_dataframes and session_id in modified_dataframes:
         original = original_dataframes[session_id]
-        modified = original.sort_values(by=column_names)
+        if not column_names:
+            return jsonify(modified_dataframes[session_id].fillna("NULL").to_dict(orient="records"))
+        modified = original[column_names]
         modified_dataframes[session_id] = modified
         return jsonify(modified.fillna("NULL").to_dict(orient="records"))
     else:
@@ -70,7 +84,7 @@ def sort_data():
         return resp
 
 
-@app.route("/sort-data", methods=['POST'])
+@app.route("/fill-null-data", methods=['POST'])
 def fill_null_values():
     session_id = request.args.get('session_id')
     column_names = request.get_json()
