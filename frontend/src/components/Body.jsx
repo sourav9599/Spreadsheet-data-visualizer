@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
 import FormStyle from "../component-styles/FormStyle";
-
+import Box from "@mui/material/Box";
 import Form from "./Form";
 import Filters from "./Filters";
-import { Box } from "@mui/system";
+import { DataGrid } from "@mui/x-data-grid";
 import FilterOptions from "./FilterOptions";
 
 const Body = () => {
@@ -112,10 +112,10 @@ const Body = () => {
 
 	const columns = React.useMemo(
 		() =>
-			Object.keys(table[0] || {}).map((key) => ({
-				name: !isHeaderPresent ? `Column ${key}` : key,
-				selector: key,
-				sortable: true,
+			Object.keys(table[0] || {}).map((key, index) => ({
+				field: !isHeaderPresent ? `Column ${key}` : key,
+				headerName: key,
+				width: 100,
 			})),
 		[table]
 	);
@@ -137,30 +137,40 @@ const Body = () => {
 			{isUploaded && (
 				<>
 					<Filters />
-					<Form
+					{/* <Form
 						handleSubmit={handleSubmit}
 						handleFileChange={handleFileChange}
 						filename={file}
 						isHeaderPresent={isHeaderPresent}
 						setIsHeaderPresent={setIsHeaderPresent}
-					/>
-					<div style={{ overflow: "auto" }} className="section-table">
-						<FilterOptions
+					/> */}
+					<div style={{ overflow: "auto" }}>
+						{/* <FilterOptions
 							columns={columns}
 							columnNames={multiSelectColumnNames}
 							setColumnNames={setMultiSelectColumnNames}
 							describeData={describeData}
 							displayColumns={displayColumns}
 							loadOriginalData={loadOriginalData}
-						/>
-						<div>
-							<DataTable
+						/> */}
+						<Box sx={{ height: 400, width: "80%" }}>
+							{/* <DataTable
 								columns={columns}
 								data={table}
 								pagination
 								paginationPerPage={10}
+							/> */}
+							<DataGrid
+								rows={table}
+								columns={columns}
+								getRowId={(row) => row.Id}
+								pageSize={10}
+								rowsPerPageOptions={[10]}
+								checkboxSelection
+								disableSelectionOnClick
+								experimentalFeatures={{ newEditingApi: true }}
 							/>
-						</div>
+						</Box>
 					</div>
 				</>
 			)}
