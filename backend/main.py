@@ -126,10 +126,10 @@ def upload_file():
 
         original_dataframes[session_id] = df
         modified_dataframes[session_id] = df
-        df = df.fillna("NULL")
+        # df = df.fillna("")
         return jsonify({
             "session_id": session_id,
-            "data": df.to_dict(orient="records")
+            "table": df.to_json(orient="table", index=False)
         })
     else:
         resp = jsonify({'message': 'Allowed file types are txt, csv, xlsx'})
