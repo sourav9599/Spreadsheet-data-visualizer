@@ -74,7 +74,8 @@ const Grid = ({ table, setTable, isHeaderPresent }) => {
 		}
 	};
 	const deleteRow = (selectedRows) => {
-		setTable(tableRowData.filter((row) => !selectedRows.includes(row)));
+		console.log(selectedRows);
+		setTableRowData(tableRowData.filter((row) => !selectedRows.includes(row)));
 	};
 
 	const onQuickFilterValueChange = (e) => {
