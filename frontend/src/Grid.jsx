@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect, useMemo, useCallback } from "react";
-
+import * as XLSX from "xlsx";
+import Papa from "papaparse";
 import { AgGridReact } from "ag-grid-react"; // the AG Grid React Component
 import "./styles.css";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
@@ -15,10 +16,10 @@ const Grid = ({ table, setTable, isHeaderPresent }) => {
 	const [tableColumnData, setTableColumnData] = useState([]);
 
 	const getFilterType = (value) => {
-		if (value in ["number", "integer"]) return "agNumberColumnFilter";
-		if (value === "string") return "agTextColumnFilter";
+		if (typeof value === "number") return "agNumberColumnFilter";
+		if (typeof value === "string") return "agTextColumnFilter";
 		if (value instanceof Date) return "agDateColumnFilter";
-		return false;
+		return null;
 	};
 
 	useEffect(() => {
@@ -26,7 +27,7 @@ const Grid = ({ table, setTable, isHeaderPresent }) => {
 			let columns = table["schema"]["fields"].map((colname) => ({
 				field: !isHeaderPresent ? `Column ${colname["name"]}` : colname["name"],
 				headerName: colname["name"],
-				filter: getFilterType(colname["type"]),
+				filter: getFilterType(table["data"][0][colname["name"]]),
 				width: 200,
 				// cellEditor: getCellEditorType(table[0][key]),
 			}));
@@ -73,7 +74,7 @@ const Grid = ({ table, setTable, isHeaderPresent }) => {
 		}
 	};
 	const deleteRow = (selectedRows) => {
-		setTable(table.filter((row) => !selectedRows.includes(row)));
+		setTable(tableRowData.filter((row) => !selectedRows.includes(row)));
 	};
 
 	const onQuickFilterValueChange = (e) => {
@@ -82,7 +83,7 @@ const Grid = ({ table, setTable, isHeaderPresent }) => {
 
 	const saveState = () => {
 		window.colState = gridColumnApi.getColumnState();
-		console.log("column state saved");
+		console.log("column state saved", gridColumnApi.getColumnState());
 	};
 
 	const restoreState = () => {
@@ -103,19 +104,27 @@ const Grid = ({ table, setTable, isHeaderPresent }) => {
 	};
 
 	const exportAsExcel = () => {
-		// const workbook = XLSX.utils.book_new();
-		// const worksheet = XLSX.utils.json_to_sheet(data);
-		// XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
-		// XLSX.writeFile(workbook, "data.xlsx");
-		// gridRowApi.forEachNodeAfterFilterAndSort((node) => {
-		// 	console.log(node.data);
-		// });
-		console.log(gridRowApi.getModel().getRowData());
+		let data = Papa.parse(gridRowApi.getDataAsCsv(), {
+			header: true,
+			dynamicTyping: true,
+		})["data"];
+		let worksheet = XLSX.utils.json_to_sheet(data);
+		let workbook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+		//let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+		//XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+		XLSX.writeFile(workbook, "export.xlsx");
 	};
 
 	const exportAsCSV = () => {
-		console.log(gridRowApi.getDataAsCsv());
 		gridRowApi.exportDataAsCsv();
+	};
+
+	const visualizeData = () => {
+		let data = Papa.parse(gridRowApi.getDataAsCsv(), {
+			header: true,
+			dynamicTyping: true,
+		})["data"];
 	};
 
 	useEffect(() => {
@@ -164,10 +173,11 @@ const Grid = ({ table, setTable, isHeaderPresent }) => {
 						'<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>'
 					}
 					overlayNoRowsTemplate={
-						"<span style=\"padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow\">This is a custom 'no rows' overlay</span>"
+						'<span style="padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow">Please Upload a File....</span>'
 					}
 				/>
 			</div>
+			<button onClick={visualizeData}>Visualize Data</button>
 		</div>
 	);
 };

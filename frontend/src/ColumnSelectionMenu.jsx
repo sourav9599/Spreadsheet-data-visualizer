@@ -4,7 +4,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Switch from "@mui/material/Switch";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { TextField } from "@mui/material";
+import { Checkbox, TextField } from "@mui/material";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { useAppContext } from "./context/app_context";
 import { useEffect, useState } from "react";
@@ -53,7 +53,7 @@ const StyledMenu = styled((props) => (
 }));
 
 export default function ColumnSelectionMenu({ columns }) {
-	const { setUnChecked, checked, setChecked } = useAppContext();
+	const { unChecked, setUnChecked, checked, setChecked } = useAppContext();
 
 	const [searchValue, setSearchValue] = useState("");
 
@@ -95,7 +95,10 @@ export default function ColumnSelectionMenu({ columns }) {
 	const handleSearch = (event) => {
 		setSearchValue(event.target.value);
 	};
-
+	const handleSelectAll = () => {
+		setChecked([...checked, ...unChecked]);
+		setUnChecked([]);
+	};
 	return (
 		<div>
 			<Button
@@ -120,6 +123,18 @@ export default function ColumnSelectionMenu({ columns }) {
 				onClose={handleClose}
 				style={{ maxHeight: "300px", overflow: "auto" }}
 			>
+				<MenuItem disableRipple>
+					<FormControlLabel
+						control={
+							<Checkbox
+								onChange={handleSelectAll}
+								checked={unChecked.length === 0}
+								inputProps={{ "aria-label": "controlled" }}
+							/>
+						}
+						label="Select All"
+					/>
+				</MenuItem>
 				<MenuItem disableRipple onKeyDown={(event) => event.stopPropagation()}>
 					<TextField
 						value={searchValue}
