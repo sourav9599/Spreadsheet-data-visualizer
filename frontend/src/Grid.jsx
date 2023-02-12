@@ -54,7 +54,7 @@ const Grid = ({ table, setTable, isHeaderPresent }) => {
 		editable: true,
 		floatingFilter: true,
 		checkboxSelection: false,
-		headerCheckboxSelection: false,
+		headerCheckboxSelection: true,
 	}));
 
 	const onGridReady = (e) => {
@@ -125,6 +125,7 @@ const Grid = ({ table, setTable, isHeaderPresent }) => {
 			header: true,
 			dynamicTyping: true,
 		})["data"];
+		console.log(data);
 	};
 
 	useEffect(() => {
@@ -147,7 +148,7 @@ const Grid = ({ table, setTable, isHeaderPresent }) => {
 			/>
 			<div
 				className="ag-theme-alpine"
-				style={{ width: "100%", height: "800px" }}
+				style={{ width: "100%", height: "700px" }}
 			>
 				<ColumnSelectionMenu columns={tableColumnData} />
 				<button onClick={() => deleteRow(gridRowApi.getSelectedRows())}>
@@ -163,7 +164,8 @@ const Grid = ({ table, setTable, isHeaderPresent }) => {
 					onGridReady={onGridReady}
 					onSelectionChanged={onSelectionChanged}
 					pagination={true}
-					paginationAutoPageSize={true}
+					paginationPageSize={20}
+					paginationAutoPageSize={false}
 					onRowEditingStarted
 					onRowEditingStopped
 					undoRedoCellEditing={true}
@@ -176,8 +178,16 @@ const Grid = ({ table, setTable, isHeaderPresent }) => {
 						'<span style="padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow">Please Upload a File....</span>'
 					}
 				/>
+				<button
+					onClick={visualizeData}
+					style={{
+						marginTop: "10px",
+						marginLeft: "50%",
+					}}
+				>
+					Visualize Data
+				</button>
 			</div>
-			<button onClick={visualizeData}>Visualize Data</button>
 		</div>
 	);
 };
