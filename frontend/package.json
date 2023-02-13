@@ -26,9 +26,7 @@
 		"react-dom": "^18.2.0",
 		"react-icons": "^4.7.1",
 		"styled-components": "^5.3.6",
-		"xlsx": "^0.18.5",
-		"@msrvida/sanddance-react": "^4",
-		"vega": "^5.22"
+		"xlsx": "^0.18.5"
 	},
 	"devDependencies": {
 		"@types/react": "^18.0.26",

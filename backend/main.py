@@ -60,7 +60,7 @@ def describe_data():
 def load_original_data():
     session_id = request.args.get('session_id')
     if session_id in original_dataframes and session_id in modified_dataframes:
-        return jsonify(original_dataframes[session_id].to_dict(orient="records"))
+        return jsonify(original_dataframes[session_id].to_json(orient="table", index=False))
     else:
         resp = jsonify({'message': 'File not found. Please re-upload.'})
         resp.status_code = 400
