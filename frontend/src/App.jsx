@@ -1,26 +1,36 @@
 import React, { useState } from 'react'
-import axios from 'axios'
-import Grid from './Grid'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { useAppContext } from './context/app_context'
+import Grid from './Grid'
 import Upload from './components/Upload'
-import Testing from './components/Testing'
+import HomePage from './components/HomePage'
+import Navbar from './components/Navbar'
+import Error from './components/Error'
 
 const App = () => {
-  const { table, setTable, isHeaderPresent } = useAppContext()
-
-  console.log(Boolean(Object.keys(table).length))
   return (
-    <main>
-      {Boolean(Object.keys(table).length) ? (
-        <Grid
-          table={table}
-          setTable={setTable}
-          isHeaderPresent={isHeaderPresent}
-        />
-      ) : (
-        <Upload />
-      )}
-    </main>
+    // <main>
+    //   {Boolean(Object.keys(table).length) ? (
+    // <Grid
+    //   table={table}
+    //   setTable={setTable}
+    //   isHeaderPresent={isHeaderPresent}
+    // />
+    //   ) : (
+    //     <Upload />
+    //   )}
+    // </main>
+
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path='/' element={<HomePage />} />
+        <Route path='/upload' element={<Upload />} />
+        <Route path='/grid' element={<Grid />} />
+        <Route path='*' element={<Error />} />
+        {/* <Route path='grid' element={}/> */}
+      </Routes>
+    </Router>
   )
 }
 

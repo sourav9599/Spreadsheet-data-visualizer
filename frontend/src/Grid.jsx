@@ -7,13 +7,23 @@ import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
 import ColumnSelectionMenu from './ColumnSelectionMenu'
 import { useAppContext } from './context/app_context'
+import {
+  Button,
+  ButtonGroup,
+  Stack,
+  FormControlLabel,
+  TextField,
+  Box,
+} from '@mui/material'
 
-const Grid = ({ table, setTable, isHeaderPresent }) => {
+const Grid = () => {
   const [gridRowApi, setGridRowApi] = useState()
   const [gridColumnApi, setGridColumnApi] = useState()
   const { unChecked, checked } = useAppContext()
   const [tableRowData, setTableRowData] = useState([])
   const [tableColumnData, setTableColumnData] = useState([])
+
+  const { table, setTable, isHeaderPresent } = useAppContext()
 
   const getFilterType = (value) => {
     if (typeof value === 'number') return 'agNumberColumnFilter'
@@ -33,7 +43,6 @@ const Grid = ({ table, setTable, isHeaderPresent }) => {
       }))
       setTableColumnData(columns)
       setTableRowData(table['data'])
-      console.log(tableRowData, tableColumnData)
     }
   }, [table])
   // const columns = useMemo(
@@ -74,7 +83,6 @@ const Grid = ({ table, setTable, isHeaderPresent }) => {
     }
   }
   const deleteRow = (selectedRows) => {
-    console.log(selectedRows)
     setTableRowData(tableRowData.filter((row) => !selectedRows.includes(row)))
   }
 
@@ -126,7 +134,6 @@ const Grid = ({ table, setTable, isHeaderPresent }) => {
       header: true,
       dynamicTyping: true,
     })['data']
-    console.log(data)
   }
 
   useEffect(() => {
@@ -134,27 +141,50 @@ const Grid = ({ table, setTable, isHeaderPresent }) => {
   }, [unChecked, checked])
 
   return (
-    <div>
-      <button onClick={exportAsCSV}>Export As CSV</button>
-      <button onClick={exportAsExcel}>Export As Excel</button>
-      <div>
-        <button onClick={saveState}>Save State</button>
-        <button onClick={restoreState}>Restore State</button>
-        <button onClick={resetState}>Reset State</button>
-      </div>
-      <input
-        type='search'
-        onChange={onQuickFilterValueChange}
-        placeholder='Quick filter'
-      />
+    <Stack
+      spacing={2}
+      width='80vw'
+      maxHeight='calc(100vh - 64px)'
+      margin='0 auto'
+      padding={4}
+    >
+      <ButtonGroup>
+        <Button variant='contained' onClick={saveState}>
+          Save State
+        </Button>
+        <Button variant='contained' onClick={restoreState}>
+          Restore State
+        </Button>
+        <Button variant='contained' onClick={resetState}>
+          Reset State
+        </Button>
+      </ButtonGroup>
+
+      <Stack direction='row' spacing={2} justifyContent='space-between'>
+        <TextField
+          label='Quick Filter'
+          size='small'
+          sx={{ backgroundColor: 'var(--clr-primary-100)' }}
+        >
+          <input type='search' onChange={onQuickFilterValueChange} />
+        </TextField>
+        <Stack direction='row' spacing={2}>
+          <ColumnSelectionMenu columns={tableColumnData} />
+          <Button
+            variant='contained'
+            size='small'
+            disableElevation
+            color='error'
+            onClick={() => deleteRow(gridRowApi.getSelectedRows())}
+          >
+            Delete Selected Rows
+          </Button>
+        </Stack>
+      </Stack>
       <div
         className='ag-theme-alpine'
         style={{ width: '100%', height: '700px' }}
       >
-        <ColumnSelectionMenu columns={tableColumnData} />
-        <button onClick={() => deleteRow(gridRowApi.getSelectedRows())}>
-          Delete Selected Rows
-        </button>
         <AgGridReact
           rowData={tableRowData} // Row Data for Rows
           columnDefs={tableColumnData} // Column Defs for Columns
@@ -179,17 +209,17 @@ const Grid = ({ table, setTable, isHeaderPresent }) => {
             '<span style="padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow">Please Upload a File....</span>'
           }
         />
-        <button
-          onClick={visualizeData}
-          style={{
-            marginTop: '10px',
-            marginLeft: '50%',
-          }}
-        >
-          Visualize Data
-        </button>
       </div>
-    </div>
+      <Stack direction='row' justifyContent='space-between'>
+        <Button variant='contained' onClick={visualizeData}>
+          Visualize Data
+        </Button>
+        <ButtonGroup variant='contained' color='success'>
+          <Button onClick={exportAsCSV}>Export As CSV</Button>
+          <Button onClick={exportAsExcel}>Export As Excel</Button>
+        </ButtonGroup>
+      </Stack>
+    </Stack>
   )
 }
 
