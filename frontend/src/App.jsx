@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { useAppContext } from './context/app_context'
-import Grid from './Grid'
+import Grid from './components/Grid'
 import Upload from './components/Upload'
 import HomePage from './components/HomePage'
 import Navbar from './components/Navbar'
