@@ -1,6 +1,7 @@
 import io
 import uuid
-
+import dtale
+from dtale.views import startup
 import pandas as pd
 from app import app
 from flask import request, jsonify
@@ -9,7 +10,7 @@ from flask import request, jsonify
 # sslify = SSLify(app)
 ALLOWED_EXTENSIONS = {'csv', 'xlsx', "xls", "xlsm", 'xlsb', 'odf', 'ods', 'odt'}
 
-original_dataframes, modified_dataframes = {}, {}
+original_dataframes, modified_dataframes, instance_ids = {}, {}, {}
 
 
 def generate_unique_id():
@@ -30,15 +31,6 @@ def read_data(file_extension: str, file, has_header):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
-# @app.route('/login', methods=['POST'])
-# def login():
-#     user = request.json.get('user')
-#     # Generate a unique token for each user
-#     token = str(uuid.uuid4())
-#     # Save user data in the sessions dictionary
-#     sessions[token] = {'user': user}
-#     return jsonify({'token': token})
 
 
 @app.route("/describe-data", methods=['GET'])
@@ -67,23 +59,6 @@ def load_original_data():
         return resp
 
 
-@app.route("/view-columns", methods=['POST'])
-def sort_data():
-    session_id = request.args.get('session_id')
-    column_names = request.get_json()['columns']
-    if session_id in original_dataframes and session_id in modified_dataframes:
-        original = original_dataframes[session_id]
-        if not column_names:
-            return jsonify(modified_dataframes[session_id].fillna("NULL").to_dict(orient="records"))
-        modified = original[column_names]
-        modified_dataframes[session_id] = modified
-        return jsonify(modified.fillna("NULL").to_dict(orient="records"))
-    else:
-        resp = jsonify({'message': 'File not found. Please re-upload.'})
-        resp.status_code = 400
-        return resp
-
-
 @app.route("/fill-null-data", methods=['POST'])
 def fill_null_values():
     session_id = request.args.get('session_id')
@@ -98,7 +73,48 @@ def fill_null_values():
         resp.status_code = 400
         return resp
 
+@app.route("/visualize-data", methods=['POST'])
+def start_dtale_session():
+    session_id = request.args.get('session_id')
+    if session_id in original_dataframes and session_id in modified_dataframes:
+        if session_id in instance_ids:
+            instance = dtale.get_instance(instance_ids[session_id])
+            instance.cleanup()
+            print(dtale.instances())
 
+        instance = startup(data=original_dataframes[session_id], ignore_duplicate=True)
+        instance_ids[session_id] = instance._data_id
+        return jsonify({
+            "dtale_instance_url": instance.main_url()
+        })           
+    else:
+        resp = jsonify({'message': 'File not found. Please re-upload.'})
+        resp.status_code = 400
+        return resp
+    
+@app.route("/update-data", methods=['POST'])
+def update_data():
+    session_id = request.args.get('session_id')
+    if session_id in original_dataframes and session_id in modified_dataframes:
+        instance = dtale.get_instance(instance_ids[session_id])
+        modified_dataframes[session_id] = instance.data
+        print(modified_dataframes[session_id])
+        return {'message': 'Successfully saved dataframe.....'}
+    else:
+        resp = jsonify({'message': 'File not found. Please re-upload.'})
+        resp.status_code = 400
+        return resp
+
+@app.route("/kill-dtale-instance", methods=['POST'])
+def kill_dtale_instance():
+    session_id = request.args.get('session_id')
+    if session_id in instance_ids:
+        instance = dtale.get_instance(instance_ids[session_id])
+        instance.cleanup()
+        print(dtale.instances())
+        return {'message': f'cleaned up dtale instances for session_id: {session_id}'}
+    return {'message': f'No dtale instances were found for session_id: {session_id}'}
+    
 @app.route('/file-upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -126,11 +142,11 @@ def upload_file():
 
         original_dataframes[session_id] = df
         modified_dataframes[session_id] = df
-        # df = df.fillna("")
-        return jsonify({
+
+        return {
             "session_id": session_id,
             "table": df.to_json(orient="table", index=False)
-        })
+        }
     else:
         resp = jsonify({'message': 'Allowed file types are txt, csv, xlsx'})
         resp.status_code = 400
@@ -138,4 +154,4 @@ def upload_file():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0", debug=True)

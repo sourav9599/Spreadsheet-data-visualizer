@@ -1,9 +1,6 @@
-from flask import Flask
+from dtale.app import build_app
 
-app = Flask(__name__)
-
-# enable debugging mode
-app.config["DEBUG"] = True
+app = build_app(reaper_on=False)
 
 # Upload folder
 # UPLOAD_FOLDER = 'files'
