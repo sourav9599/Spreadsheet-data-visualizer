@@ -11,7 +11,7 @@ const Dtale = () => {
 		<Stack
 			spacing={2}
 			width="80vw"
-			maxHeight="calc(100vh - 64px)"
+			minHeight="calc(100vh - 64px)"
 			margin="0 auto"
 			padding={4}
 		>
