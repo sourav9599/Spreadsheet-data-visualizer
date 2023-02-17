@@ -1,13 +1,11 @@
 import io
 import uuid
 import dtale
-from dtale.views import startup
 import pandas as pd
-from app import app
+from AppEngg import app
+from dtale.views import startup
 from flask import request, jsonify
 
-# from flask_sslify import SSLify
-# sslify = SSLify(app)
 ALLOWED_EXTENSIONS = {'csv', 'xlsx', "xls", "xlsm", 'xlsb', 'odf', 'ods', 'odt'}
 
 original_dataframes, modified_dataframes, instance_ids = {}, {}, {}
@@ -30,7 +28,6 @@ def read_data(file_extension: str, file, has_header):
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 
 
 @app.route("/describe-data", methods=['GET'])
@@ -73,6 +70,7 @@ def fill_null_values():
         resp.status_code = 400
         return resp
 
+
 @app.route("/visualize-data", methods=['POST'])
 def start_dtale_session():
     session_id = request.args.get('session_id')
@@ -86,12 +84,13 @@ def start_dtale_session():
         instance_ids[session_id] = instance._data_id
         return jsonify({
             "dtale_instance_url": instance.main_url()
-        })           
+        })
     else:
         resp = jsonify({'message': 'File not found. Please re-upload.'})
         resp.status_code = 400
         return resp
-    
+
+
 @app.route("/update-data", methods=['POST'])
 def update_data():
     session_id = request.args.get('session_id')
@@ -105,6 +104,7 @@ def update_data():
         resp.status_code = 400
         return resp
 
+
 @app.route("/kill-dtale-instance", methods=['POST'])
 def kill_dtale_instance():
     session_id = request.args.get('session_id')
@@ -114,7 +114,8 @@ def kill_dtale_instance():
         print(dtale.instances())
         return {'message': f'cleaned up dtale instances for session_id: {session_id}'}
     return {'message': f'No dtale instances were found for session_id: {session_id}'}
-    
+
+
 @app.route('/file-upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -151,7 +152,3 @@ def upload_file():
         resp = jsonify({'message': 'Allowed file types are txt, csv, xlsx'})
         resp.status_code = 400
         return resp
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True)

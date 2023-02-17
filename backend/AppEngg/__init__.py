@@ -7,3 +7,5 @@ app = build_app(reaper_on=False)
 # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
 app.config['MAX_DF_COUNT'] = 100
+
+from AppEngg import routes
