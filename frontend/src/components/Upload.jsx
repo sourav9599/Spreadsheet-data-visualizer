@@ -7,6 +7,8 @@ import { RxCrossCircled } from "react-icons/rx";
 import { GrDocumentCsv } from "react-icons/gr";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { Link } from "react-router-dom";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 const Upload = () => {
 	const {
@@ -15,7 +17,7 @@ const Upload = () => {
 		sessionId,
 		setSessionId,
 		isHeaderPresent,
-		table,
+		setIsHeaderPresent,
 		setTable,
 	} = useAppContext();
 
@@ -129,11 +131,11 @@ const Upload = () => {
 				<h3>Upload Your File</h3>
 				<form className="form-section">
 					<label htmlFor="file" className="file-input-style">
-						{!!file ? (
+						{file ? (
 							<div className="file-input-after">
 								<GrDocumentCsv />
 								<Typography size="small" component="span">
-									{!!file && file.name}
+									{file && file.name}
 								</Typography>
 								<RxCrossCircled
 									onClick={handleRemoveFile}
@@ -161,6 +163,16 @@ const Upload = () => {
 						)}
 					</label>
 					{/* <button type='submit'>Submit</button> */}
+					<FormControlLabel
+						control={
+							<Checkbox
+								checked={isHeaderPresent}
+								onChange={() => setIsHeaderPresent(!isHeaderPresent)}
+								size="small"
+							/>
+						}
+						label="Acknowledge If Header Row Present"
+					/>
 
 					<Button variant="contained" onClick={handleSubmit} fullWidth>
 						<Link

@@ -13,7 +13,7 @@ export const AppProvider = ({ children }) => {
 
 	const [file, setFile] = useState(null);
 	const [sessionId, setSessionId] = useState("");
-	const [isHeaderPresent, setIsHeaderPresent] = useState(true);
+	const [isHeaderPresent, setIsHeaderPresent] = useState(false);
 	const [table, setTable] = useState({});
 
 	return (
@@ -28,13 +28,13 @@ export const AppProvider = ({ children }) => {
 				sessionId,
 				setSessionId,
 				isHeaderPresent,
+				setIsHeaderPresent,
 				table,
 				setTable,
 				loading,
 				setLoading,
 				dtaleIframe,
 				setDtaleIframe,
-				setIsHeaderPresent,
 			}}
 		>
 			{children}
