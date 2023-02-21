@@ -106,15 +106,33 @@ const Navbar = () => {
 					{["Dataset", "EDA", "Model Training", "Prediction"].map(
 						(text, index) => (
 							<ListItem key={text} disablePadding>
-								<ListItemButton>
-									<ListItemIcon>
-										{index % 2 === 0 ? <TroubleshootIcon /> : <MailIcon />}
-									</ListItemIcon>
-									<ListItemText primary={text} />
-								</ListItemButton>
+								<Link
+									to="/"
+									style={{ textDecoration: "none", color: "var(--white)" }}
+								>
+									<ListItemButton>
+										<ListItemIcon>
+											{index % 2 === 0 ? <TroubleshootIcon /> : <MailIcon />}
+										</ListItemIcon>
+										<ListItemText primary={text} />
+									</ListItemButton>
+								</Link>
 							</ListItem>
 						)
 					)}
+					<ListItem key="Chatgpt" disablePadding>
+						<Link
+							to="/chatgpt"
+							style={{ textDecoration: "none", color: "var(--white)" }}
+						>
+							<ListItemButton>
+								<ListItemIcon>
+									<TroubleshootIcon />
+								</ListItemIcon>
+								<ListItemText primary="Chatgpt" />
+							</ListItemButton>
+						</Link>
+					</ListItem>
 				</List>
 				<Divider />
 			</Drawer>

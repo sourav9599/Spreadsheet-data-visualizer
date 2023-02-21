@@ -8,21 +8,10 @@ import Navbar from "./components/Navbar";
 import Error from "./components/Error";
 import Dtale from "./components/Dtale";
 import Login from "./components/Login";
+import Chatgpt from "./components/Chatgpt";
 
 const App = () => {
 	return (
-		// <main>
-		//   {Boolean(Object.keys(table).length) ? (
-		// <Grid
-		//   table={table}
-		//   setTable={setTable}
-		//   isHeaderPresent={isHeaderPresent}
-		// />
-		//   ) : (
-		//     <Upload />
-		//   )}
-		// </main>
-
 		<Router>
 			<Navbar />
 			<Routes>
@@ -31,6 +20,7 @@ const App = () => {
 				<Route path="/grid" element={<Grid />} />
 				<Route path="/visualize-data" element={<Dtale />} />
 				<Route path="/login" element={<Login />} />
+				<Route path="/chatgpt" element={<Chatgpt />} />
 				<Route path="*" element={<Error />} />
 				{/* <Route path='grid' element={}/> */}
 			</Routes>

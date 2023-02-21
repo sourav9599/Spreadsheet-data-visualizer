@@ -5,6 +5,9 @@ import pandas as pd
 from AppEngg import app
 from dtale.views import startup
 from flask import request, jsonify
+import openai
+
+openai.api_key = "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"
 
 ALLOWED_EXTENSIONS = {'csv', 'xlsx', "xls", "xlsm", 'xlsb', 'odf', 'ods', 'odt'}
 
@@ -30,19 +33,20 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route("/describe-data", methods=['GET'])
+@app.route("/chatgpt", methods=['POST'])
 def describe_data():
-    session_id = request.args.get('session_id')
-    if session_id in original_dataframes and session_id in modified_dataframes:
-        original = original_dataframes[session_id]
-        modified = original.describe()
-        modified = modified.reset_index(level=0)
-        modified_dataframes[session_id] = modified
-        return jsonify(modified.to_dict(orient="records"))
-    else:
-        resp = jsonify({'message': 'File not found. Please re-upload.'})
-        resp.status_code = 400
-        return resp
+    message = request.get_json(force=True)['question']
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt=message,
+        temperature=0,
+        max_tokens=3500,
+        top_p=1,
+        frequency_penalty=0.5,
+        presence_penalty=0
+    )
+    print(response)
+    return {"answer": str(response["choices"][0]["text"])}
 
 
 @app.route("/load-original", methods=['GET'])
