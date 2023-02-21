@@ -124,7 +124,7 @@ const Upload = () => {
 		<Wrapper>
 			<section className="upload-section">
 				<Typography variant="h4" component="h2" sx={{ fontWeight: "600" }}>
-					SpreadSheet Viz
+					UPLOAD YOUR DATASET
 				</Typography>
 				<p>Accepted file formats: csv, xlsx, etc.</p>
 

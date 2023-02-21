@@ -7,6 +7,7 @@ import HomePage from "./components/HomePage";
 import Navbar from "./components/Navbar";
 import Error from "./components/Error";
 import Dtale from "./components/Dtale";
+import Login from "./components/Login";
 
 const App = () => {
 	return (
@@ -29,6 +30,7 @@ const App = () => {
 				<Route path="/upload" element={<Upload />} />
 				<Route path="/grid" element={<Grid />} />
 				<Route path="/visualize-data" element={<Dtale />} />
+				<Route path="/login" element={<Login />} />
 				<Route path="*" element={<Error />} />
 				{/* <Route path='grid' element={}/> */}
 			</Routes>

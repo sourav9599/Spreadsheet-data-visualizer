@@ -25,8 +25,14 @@ const Grid = () => {
 	const [tableRowData, setTableRowData] = useState([]);
 	const [tableColumnData, setTableColumnData] = useState([]);
 
-	const { table, setTable, sessionId, isHeaderPresent, setDtaleIframe } =
-		useAppContext();
+	const {
+		table,
+		setTable,
+		sessionId,
+		isHeaderPresent,
+		setDtaleDataIframe,
+		setDtaleChartsIframe,
+	} = useAppContext();
 	const getFilterType = (value) => {
 		if (typeof value === "number") return "agNumberColumnFilter";
 		if (typeof value === "string") return "agTextColumnFilter";
@@ -35,11 +41,11 @@ const Grid = () => {
 	};
 
 	useEffect(() => {
-		if (Object.keys(table).length) {
-			let columns = table["schema"]["fields"].map((colname) => ({
-				field: !isHeaderPresent ? `Column ${colname["name"]}` : colname["name"],
-				headerName: colname["name"],
-				filter: getFilterType(table["data"][0][colname["name"]]),
+		if (table["data"]) {
+			let columns = Object.keys(table["data"][0]).map((colname) => ({
+				field: colname,
+				headerName: !isHeaderPresent ? "Column" + colname : colname,
+				filter: getFilterType(table["data"][0][colname]),
 				width: 200,
 				// cellEditor: getCellEditorType(table[0][key]),
 			}));
@@ -59,7 +65,10 @@ const Grid = () => {
 					"?" +
 					new URLSearchParams(params).toString()
 			);
-			setDtaleIframe(response.data["dtale_instance_url"]);
+			setDtaleDataIframe(response.data["dtale_instance_url"]);
+			setDtaleChartsIframe(
+				response.data["dtale_instance_url"].replace("/main/", "/charts/")
+			);
 		} catch (err) {
 			console.error(err);
 		}

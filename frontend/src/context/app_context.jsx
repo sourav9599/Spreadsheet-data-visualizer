@@ -7,7 +7,8 @@ export const AppProvider = ({ children }) => {
 	const [menuItem, setMenuItem] = useState({});
 	const [checked, setChecked] = useState([]);
 	const [loading, setLoading] = useState(false);
-	const [dtaleIframe, setDtaleIframe] = useState("");
+	const [dtaleDataIframe, setDtaleDataIframe] = useState("");
+	const [dtaleChartsIframe, setDtaleChartsIframe] = useState("");
 
 	// From Previous App Component
 
@@ -33,8 +34,10 @@ export const AppProvider = ({ children }) => {
 				setTable,
 				loading,
 				setLoading,
-				dtaleIframe,
-				setDtaleIframe,
+				dtaleDataIframe,
+				setDtaleDataIframe,
+				dtaleChartsIframe,
+				setDtaleChartsIframe,
 			}}
 		>
 			{children}
