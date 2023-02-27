@@ -108,7 +108,7 @@ const Navbar = () => {
 							<ListItem key={text} disablePadding>
 								<Link
 									to="/"
-									style={{ textDecoration: "none", color: "var(--white)" }}
+									style={{ textDecoration: "none", color: "var(--black)" }}
 								>
 									<ListItemButton>
 										<ListItemIcon>
@@ -123,7 +123,7 @@ const Navbar = () => {
 					<ListItem key="Chatgpt" disablePadding>
 						<Link
 							to="/chatgpt"
-							style={{ textDecoration: "none", color: "var(--white)" }}
+							style={{ textDecoration: "none", color: "var(--black)" }}
 						>
 							<ListItemButton>
 								<ListItemIcon>

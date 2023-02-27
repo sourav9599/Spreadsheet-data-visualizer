@@ -1,6 +1,12 @@
 import { useRef, useState } from "react";
 import "./Chatgpt.css";
 import axios from "axios";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import {
+	docco,
+	atomOneLight,
+	atomOneDark,
+} from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 const YOU = "ME";
 const AI = "AI";
@@ -35,10 +41,12 @@ function Chatgpt() {
 		const value = qna.value;
 
 		if (Array.isArray(value)) {
-			return value.map((v) => <p className="message-text">{v}</p>);
+			return value.map((v) => (
+				<SyntaxHighlighter style={docco}>{v}</SyntaxHighlighter>
+			));
 		}
 
-		return <p className="message-text">{value}</p>;
+		return <SyntaxHighlighter style={docco}>{value}</SyntaxHighlighter>;
 	};
 	return (
 		<main className="container">
@@ -52,7 +60,7 @@ function Chatgpt() {
 									alt=""
 									className="avtar"
 								/>
-								<p>{renderContent(qna)}</p>
+								<p className="message-text">{qna.value}</p>
 							</div>
 						);
 					}
@@ -63,7 +71,7 @@ function Chatgpt() {
 								alt=""
 								className="avtar"
 							/>
-							<p>{renderContent(qna)}</p>
+							<p className="message-text">{renderContent(qna)}</p>
 						</div>
 					);
 				})}

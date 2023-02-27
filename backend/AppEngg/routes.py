@@ -7,7 +7,7 @@ from dtale.views import startup
 from flask import request, jsonify
 import openai
 
-openai.api_key = "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"
+openai.api_key = "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"
 
 ALLOWED_EXTENSIONS = {'csv', 'xlsx', "xls", "xlsm", 'xlsb', 'odf', 'ods', 'odt'}
 
@@ -37,7 +37,7 @@ def allowed_file(filename):
 def describe_data():
     message = request.get_json(force=True)['question']
     response = openai.Completion.create(
-        model="text-davinci-003",
+        model="text-davinci-003", #"code-davinci-002"
         prompt=message,
         temperature=0,
         max_tokens=3500,
