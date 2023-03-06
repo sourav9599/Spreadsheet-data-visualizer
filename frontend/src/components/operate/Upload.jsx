@@ -1,5 +1,5 @@
 import React from "react";
-import { useAppContext } from "../context/app_context";
+import { useAppContext } from "../../context/app_context.jsx";
 import axios from "axios";
 import styled from "styled-components";
 import { Button, Typography } from "@mui/material";

@@ -6,7 +6,7 @@ import Switch from "@mui/material/Switch";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { Checkbox, TextField } from "@mui/material";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import { useAppContext } from "../context/app_context";
+import { useAppContext } from "../../context/app_context.jsx";
 import { useEffect, useState } from "react";
 
 const StyledMenu = styled((props) => (

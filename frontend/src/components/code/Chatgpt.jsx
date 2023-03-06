@@ -50,6 +50,21 @@ function Chatgpt() {
 	};
 	return (
 		<main className="container">
+			<div className="chat-input">
+				<input
+					type="text"
+					ref={inputRef}
+					className="form-control col"
+					placeholder="Type Something"
+				/>
+				<button
+					disabled={loading}
+					className="btn btn-success"
+					onClick={handleSend}
+				>
+					Send
+				</button>
+			</div>
 			<div className="chats">
 				{qna.map((qna) => {
 					if (qna.from === YOU) {
@@ -86,22 +101,6 @@ function Chatgpt() {
 						<p>Typing...</p>
 					</div>
 				)}
-			</div>
-
-			<div className="chat-input">
-				<input
-					type="text"
-					ref={inputRef}
-					className="form-control col"
-					placeholder="Type Something"
-				/>
-				<button
-					disabled={loading}
-					className="btn btn-success"
-					onClick={handleSend}
-				>
-					Send
-				</button>
 			</div>
 		</main>
 	);

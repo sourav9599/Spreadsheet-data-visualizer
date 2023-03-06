@@ -1,6 +1,6 @@
 import React from "react";
 import Iframe from "react-iframe";
-import { useAppContext } from "../context/app_context";
+import { useAppContext } from "../../context/app_context.jsx";
 import { Stack, ButtonGroup, Paper, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";

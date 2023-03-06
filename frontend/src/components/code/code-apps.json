@@ -1,0 +1,17 @@
+[
+	{
+		"name": "iCODEGEN",
+		"description": "Provide code as nanobots based on requirements...",
+		"image_path": ""
+	},
+	{
+		"name": "CODEMILL",
+		"description": "Supports Java and .NET",
+		"image_path": ""
+	},
+	{
+		"name": "ASK GPT - CODERFX",
+		"description": "ASK GPT Models using API Token",
+		"image_path": "../../assets/CODERFX.png"
+	}
+]

@@ -6,8 +6,8 @@ import { AgGridReact } from "ag-grid-react"; // the AG Grid React Component
 import "./styles.css";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
-import ColumnSelectionMenu from "./ColumnSelectionMenu";
-import { useAppContext } from "../context/app_context";
+import ColumnSelectionMenu from "./ColumnSelectionMenu.jsx";
+import { useAppContext } from "../../context/app_context.jsx";
 import axios from "axios";
 import {
 	Button,
