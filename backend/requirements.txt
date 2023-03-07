@@ -63,6 +63,7 @@ statsmodels==0.13.5
 strsimpy==0.2.1
 tenacity==8.2.1
 threadpoolctl==3.1.0
+tinydb==4.7.1
 tqdm==4.64.1
 typing_extensions==4.5.0
 urllib3==1.26.14
