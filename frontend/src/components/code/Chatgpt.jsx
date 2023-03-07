@@ -109,7 +109,7 @@ function Chatgpt() {
 						return (
 							<div className="send chat">
 								<img
-									src="https://cdn-icons-png.flaticon.com/512/2202/2202112.png"
+									src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
 									alt=""
 									className="avtar"
 								/>
@@ -120,7 +120,7 @@ function Chatgpt() {
 					return (
 						<div className="recieve chat">
 							<img
-								src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png"
+								src="https://cdn-icons-png.flaticon.com/512/9626/9626678.png"
 								alt=""
 								className="avtar"
 							/>
@@ -132,7 +132,7 @@ function Chatgpt() {
 				{loading && (
 					<div className="recieve chat">
 						<img
-							src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png"
+							src="https://cdn-icons-png.flaticon.com/512/9626/9626678.png"
 							alt=""
 							className="avtar"
 						/>
