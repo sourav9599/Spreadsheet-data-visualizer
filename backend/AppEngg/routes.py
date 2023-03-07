@@ -2,14 +2,9 @@ import io
 import uuid
 import dtale
 import pandas as pd
-import datetime
-from AppEngg import app, db
-from AppEngg.models import Usage
+from AppEngg import app
 from dtale.views import startup
 from flask import request, jsonify
-import openai
-
-openai.api_key = "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"
 
 ALLOWED_EXTENSIONS = {'csv', 'xlsx', "xls", "xlsm", 'xlsb', 'odf', 'ods', 'odt'}
 
@@ -33,80 +28,6 @@ def read_data(file_extension: str, file, has_header):
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-# Set the daily limit and reset time
-daily_limit = 500
-reset_time = datetime.time(hour=0, minute=0)
-
-
-def check_token_limit(user_id, tokens):
-    # Check the number of tokens used by the user today
-    today = datetime.datetime.now().date()
-    reset_datetime = datetime.datetime.combine(today, reset_time)
-    records = db.engine.execute("SELECT COALESCE(SUM(tokens), 0) FROM usage WHERE user_id = ? AND timestamp >= ?",
-                                (user_id, reset_datetime))
-    print(records)
-    total_tokens_used = records[0]
-
-    if total_tokens_used + tokens > daily_limit:
-        # Daily limit exceeded
-        return False
-    else:
-        # Add the current usage to the database
-        timestamp = datetime.datetime.now()
-        db.session.add(Usage(user_id=user_id,
-                             timestamp=timestamp,
-                             tokens=tokens))
-        db.session.commit()
-        return True
-
-
-# def generate_code(user_id, prompt):
-#     # Calculate the number of tokens needed for the prompt
-#     prompt_tokens = openai.Completion.create(engine="davinci-codex", prompt=prompt)["choices"][0]["tokens"]
-#
-#     if not check_token_limit(user_id, prompt_tokens):
-#         # Daily limit exceeded
-#         raise ValueError("Daily token limit exceeded for user.")
-#
-#     # Calculate the number of tokens remaining for the generated code
-#     code_tokens = max_tokens - prompt_tokens
-#
-#     # Generate the code using OpenAI API
-#     response = openai.Completion.create(
-#         engine="davinci-codex",
-#         prompt=prompt,
-#         max_tokens=code_tokens,
-#         n=1,
-#         stop=None,
-#         temperature=0.7,
-#     )
-#
-#     # Add the token usage for the generated code to the database
-#     code_tokens_used = response.choices[0].tokens_used
-#     db.session.add(Usage(user_id=user_id,
-#                          timestamp=datetime.datetime.now(),
-#                          tokens=code_tokens_used))
-#     db.session.commit()
-#
-#     return response.choices[0].text.strip()
-
-
-@app.route("/chatgpt", methods=['POST'])
-def describe_data():
-    message = request.get_json(force=True)['question']
-    response = openai.Completion.create(
-        model="text-davinci-003",  # "code-davinci-002"
-        prompt=message,
-        temperature=0,
-        max_tokens=3500,
-        top_p=1,
-        frequency_penalty=0.5,
-        presence_penalty=0
-    )
-    print(response)
-    return {"answer": str(response["choices"][0]["text"])}
 
 
 @app.route("/load-original", methods=['GET'])

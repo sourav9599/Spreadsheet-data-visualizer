@@ -10,9 +10,4 @@ app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
 app.config['MAX_DF_COUNT'] = 100
 db = SQLAlchemy(app)
 
-# Upload folder
-# UPLOAD_FOLDER = 'files'
-# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-
-from AppEngg import routes, code_routes
+from AppEngg import routes, code_routes, models

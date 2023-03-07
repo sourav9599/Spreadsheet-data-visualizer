@@ -7,6 +7,7 @@ import {
 	atomOneLight,
 	atomOneDark,
 } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import Suggestions from "./Suggestions";
 
 const YOU = "ME";
 const AI = "AI";
@@ -14,23 +15,43 @@ function Chatgpt() {
 	const inputRef = useRef();
 	const [qna, setQna] = useState([]);
 	const [loading, setLoading] = useState(false);
+	const [hint, setHint] = useState(false);
+	const [hintData, setHintData] = useState();
 
 	const updateQNA = (from, value) => {
 		setQna((qna) => [...qna, { from, value }]);
 	};
 
-	const handleSend = () => {
+	const handleSend = (ignoreHint) => {
 		const question = inputRef.current.value;
 		updateQNA(YOU, question);
-
 		setLoading(true);
+		setHint(false);
+		const params = {
+			ignore_hint: ignoreHint,
+		};
 		axios
-			.post("http://localhost:5000/chatgpt", {
-				question,
-			})
+			.post(
+				"http://localhost:5000/chatgpt?" +
+					new URLSearchParams(params).toString(),
+				{
+					question,
+				}
+			)
 			.then((response) => {
-				console.log(response.data.answer);
-				updateQNA(AI, response.data.answer);
+				if ("answer" in response.data) {
+					console.log(response.data.answer);
+					updateQNA(AI, response.data.answer);
+				}
+				if ("hint" in response.data) {
+					console.log(response.data);
+					setHintData(response.data);
+					setHint(true);
+				}
+			})
+			.catch((response) => {
+				console.log(response.data);
+				alert(response.data);
 			})
 			.finally(() => {
 				setLoading(false);
@@ -57,13 +78,30 @@ function Chatgpt() {
 					className="form-control col"
 					placeholder="Type Something"
 				/>
-				<button
-					disabled={loading}
-					className="btn btn-success"
-					onClick={handleSend}
-				>
-					Send
-				</button>
+				{hint ? (
+					<>
+						<button
+							disabled={loading}
+							className="btn btn-success"
+							onClick={() => handleSend(true)}
+						>
+							Re-Send
+						</button>
+						<Suggestions
+							setHint={setHint}
+							handleSend={handleSend}
+							hintData={hintData}
+						/>
+					</>
+				) : (
+					<button
+						disabled={loading}
+						className="btn btn-success"
+						onClick={() => handleSend(false)}
+					>
+						Send
+					</button>
+				)}
 			</div>
 			<div className="chats">
 				{qna.map((qna) => {
