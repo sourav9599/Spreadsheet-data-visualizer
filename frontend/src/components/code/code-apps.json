@@ -1,17 +1,17 @@
 [
-	{
-		"name": "iCODEGEN",
-		"description": "Provide code as nanobots based on requirements...",
-		"image_path": ""
-	},
-	{
-		"name": "CODEMILL",
-		"description": "Supports Java and .NET",
-		"image_path": ""
-	},
-	{
-		"name": "ASK GPT - CODERFX",
-		"description": "ASK GPT Models using API Token",
-		"image_path": "../../assets/CODERFX.png"
-	}
+  {
+    "name": "iCODEGEN",
+    "description": "Provide code as nanobots based on requirements...",
+    "image_path": "/src/assets/CODERFX.png"
+  },
+  {
+    "name": "CODEMILL",
+    "description": "Supports Java and .NET",
+    "image_path": "https://images.unsplash.com/photo-1493612276216-ee3925520721?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1964&q=80"
+  },
+  {
+    "name": "ASK GPT - CODERFX",
+    "description": "ASK GPT Models using API Token",
+    "image_path": "https://images.unsplash.com/photo-1550686041-366ad85a1355?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1887&q=80"
+  }
 ]
