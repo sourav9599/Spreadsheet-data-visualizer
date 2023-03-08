@@ -49,7 +49,12 @@ export default function ActionAreaCard() {
 
       <Button
         variant='contained'
-        sx={{ width: 'fit-content', position: 'relative', left: '50px' }}
+        sx={{
+          width: 'fit-content',
+          padding: '10px 30px',
+          justifySelf: 'center',
+          alignSelf: 'center',
+        }}
       >
         Explore Other Options
       </Button>

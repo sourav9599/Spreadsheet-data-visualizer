@@ -16,6 +16,7 @@ import {
   MenuItem,
   Select,
   Stack,
+  Typography,
 } from '@mui/material'
 
 const YOU = 'ME'
@@ -26,6 +27,8 @@ function Chatgpt() {
   const [loading, setLoading] = useState(false)
   const [hint, setHint] = useState(false)
   const [hintData, setHintData] = useState()
+
+  const [totalTokens, setTotalTokens] = useState(1023)
 
   const updateQNA = (from, value) => {
     setQna((qna) => [...qna, { from, value }])
@@ -102,83 +105,119 @@ function Chatgpt() {
             </Select>
           </FormControl>
           <Stack direction='column' spacing={2}>
-            <Button variant='contained'>Previously Searched</Button>
-            <Button variant='contained'>Time Limit</Button>
+            <FormControl
+              fullWidth
+              sx={{ background: '#fafafa', marginBottom: '2rem' }}
+            >
+              <InputLabel id='demo-simple-select-label' variant='filled'>
+                Select Technology
+              </InputLabel>
+              <Select
+                labelId='demo-simple-select-label'
+                id='demo-simple-select'
+                value={100}
+                label='Age'
+                onChange={() => {}}
+              >
+                <MenuItem value={10}>Ten</MenuItem>
+                <MenuItem value={20}>Twenty</MenuItem>
+                <MenuItem value={30}>Thirty</MenuItem>
+              </Select>
+            </FormControl>
+            <Box
+              display='flex'
+              width='100%'
+              justifyContent='space-between'
+              padding={1}
+              border='1px solid gray'
+              borderRadius='8px'
+              sx={{ backgroundColor: 'white' }}
+            >
+              <Typography variant='h6'>Total Tokens: </Typography>
+              <Typography variant='h6'>{totalTokens}</Typography>
+            </Box>
             <Button variant='contained'>
               Fine Tuned based on customer requirements
             </Button>
           </Stack>
         </Box>
       </div>
-      <div className='chat-input'>
-        <input
-          type='text'
-          ref={inputRef}
-          className='form-control col'
-          placeholder='Type Something'
-        />
-        {hint ? (
-          <>
+
+      <Box
+        display='flex'
+        flexDirection='column'
+        width='100%'
+        justifyContent='space-between'
+      >
+        <div className='chat-input'>
+          <input
+            type='text'
+            ref={inputRef}
+            className='form-control col'
+            placeholder='Type Something'
+          />
+          {hint ? (
+            <>
+              <button
+                disabled={loading}
+                className='btn btn-success'
+                onClick={() => handleSend(true)}
+              >
+                Re-Send
+              </button>
+              <Suggestions
+                setHint={setHint}
+                handleSend={handleSend}
+                hintData={hintData}
+              />
+            </>
+          ) : (
             <button
               disabled={loading}
               className='btn btn-success'
-              onClick={() => handleSend(true)}
+              onClick={() => handleSend(false)}
             >
-              Re-Send
+              Send
             </button>
-            <Suggestions
-              setHint={setHint}
-              handleSend={handleSend}
-              hintData={hintData}
-            />
-          </>
-        ) : (
-          <button
-            disabled={loading}
-            className='btn btn-success'
-            onClick={() => handleSend(false)}
-          >
-            Send
-          </button>
-        )}
-      </div>
-      <div className='chats'>
-        {qna.map((qna) => {
-          if (qna.from === YOU) {
+          )}
+        </div>
+        <div className='chats'>
+          {qna.map((qna) => {
+            if (qna.from === YOU) {
+              return (
+                <div className='send chat'>
+                  <img
+                    src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
+                    alt=''
+                    className='avtar'
+                  />
+                  <p className='message-text'>{qna.value}</p>
+                </div>
+              )
+            }
             return (
-              <div className='send chat'>
+              <div className='recieve chat'>
                 <img
-                  src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
+                  src='https://cdn-icons-png.flaticon.com/512/9626/9626678.png'
                   alt=''
                   className='avtar'
                 />
-                <p className='message-text'>{qna.value}</p>
+                <p className='message-text'>{renderContent(qna)}</p>
               </div>
             )
-          }
-          return (
+          })}
+          {loading && (
             <div className='recieve chat'>
               <img
                 src='https://cdn-icons-png.flaticon.com/512/9626/9626678.png'
                 alt=''
                 className='avtar'
               />
-              <p className='message-text'>{renderContent(qna)}</p>
+              <p>Typing...</p>
             </div>
-          )
-        })}
-
-        {loading && (
-          <div className='recieve chat'>
-            <img
-              src='https://cdn-icons-png.flaticon.com/512/9626/9626678.png'
-              alt=''
-              className='avtar'
-            />
-            <p>Typing...</p>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </Box>
     </main>
   )
 }

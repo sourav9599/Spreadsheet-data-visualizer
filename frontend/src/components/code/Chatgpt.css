@@ -1,7 +1,5 @@
 .chat-input {
   display: flex;
-  align-self: flex-start;
-  flex-grow: 1;
 }
 
 .chat-input input {
@@ -15,9 +13,12 @@
   display: flex;
   /* flex-direction: column; */
   justify-content: space-between;
-  height: 90vh;
+  height: 80vh;
   width: 100%;
   margin-top: 2rem;
+  padding: 2rem;
+  background-color: var(--clr-primary-200);
+  border-radius: 10px;
 }
 
 .chats {
