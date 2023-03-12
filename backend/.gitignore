@@ -9,6 +9,7 @@ lerna-debug.log*
 
 
 node_modules
+db.json
 dist
 dist-ssr
 data-viz

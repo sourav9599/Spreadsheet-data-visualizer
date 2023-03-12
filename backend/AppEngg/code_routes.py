@@ -78,17 +78,3 @@ def generate_code():
 
     return {"answer": response.choices[0].text.strip(), 'tokens_used': response["usage"]['total_tokens']}
 
-# @app.route("/chatgpt", methods=['POST'])
-# def describe_data():
-#     message = request.get_json(force=True)['question']
-#     response = openai.Completion.create(
-#         model="text-davinci-003",  # "code-davinci-002"
-#         prompt=message,
-#         temperature=0,
-#         max_tokens=3500,
-#         top_p=1,
-#         frequency_penalty=0.5,
-#         presence_penalty=0
-#     )
-#     print(response)
-#     return {"answer": response.choices[0].text.strip()}
