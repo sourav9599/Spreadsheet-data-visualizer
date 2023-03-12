@@ -61,7 +61,8 @@ const Grid = () => {
 		};
 		try {
 			const response = await axios.post(
-				"http://127.0.0.1:5000/visualize-data" +
+				import.meta.env.VITE_BACKEND_BASE_URL +
+					"/visualize-data" +
 					"?" +
 					new URLSearchParams(params).toString()
 			);

@@ -27,7 +27,7 @@ const HomePage = () => {
 							gutterBottom
 							component="h1"
 						>
-							APP ENGINEERING AUTOMATION
+							APP-SCRIBE
 						</Typography>
 						<Typography variant="subtitle1">
 							Toolkit for deploying ML Models!!!!!!

@@ -36,7 +36,8 @@ const Upload = () => {
 		try {
 			// <Loading />
 			const response = await axios.post(
-				"http://127.0.0.1:5000/file-upload" +
+				import.meta.env.VITE_BACKEND_BASE_URL +
+					"/file-upload" +
 					"?" +
 					new URLSearchParams(params).toString(),
 				formData

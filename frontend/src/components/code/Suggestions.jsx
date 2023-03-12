@@ -67,7 +67,7 @@ export default function Suggestions({ setHint, hintData }) {
 
 	return (
 		<div>
-			<Button variant="outlined" onClick={handleClickOpen}>
+			<Button variant="contained" color="info" onClick={handleClickOpen}>
 				similar search found. Click to view
 			</Button>
 			<BootstrapDialog

@@ -1,0 +1,37 @@
+{
+	"languages": [
+		"",
+		"python",
+		"javascript",
+		"c",
+		"cpp",
+		"typescript",
+		"sql",
+		"go",
+		"java",
+		"kotlin",
+		"csharp",
+		"php",
+		"swift",
+		"ruby",
+		"nix",
+		"scala",
+		"bash",
+		"rust",
+		"dart"
+	],
+	"technology": [
+		"",
+		"Angular",
+		"React",
+		"Vue",
+		"jQuery",
+		"Ruby on Rails",
+		"Flask",
+		"Django",
+		"Express",
+		"Node.js",
+		"Springboot",
+		"Laravel"
+	]
+}

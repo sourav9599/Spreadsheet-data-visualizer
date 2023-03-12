@@ -20,8 +20,9 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const Dtale = () => {
 	const { dtaleDataIframe, sessionId, dtaleChartsIframe } = useAppContext();
-	const iframeDataURL = "http://127.0.0.1:5000" + dtaleDataIframe;
-	const iframeChartsURL = "http://127.0.0.1:5000" + dtaleChartsIframe;
+	const iframeDataURL = import.meta.env.VITE_BACKEND_BASE_URL + dtaleDataIframe;
+	const iframeChartsURL =
+		import.meta.env.VITE_BACKEND_BASE_URL + dtaleChartsIframe;
 	console.log(iframeChartsURL, iframeDataURL);
 
 	const saveData = async () => {
@@ -30,8 +31,8 @@ const Dtale = () => {
 		};
 		try {
 			const response = await axios.post(
-				"http://127.0.0.1:5000/update-data" +
-					"?" +
+				import.meta.env.VITE_BACKEND_BASE_URL +
+					"/update-data?" +
 					new URLSearchParams(params).toString()
 			);
 			alert(response.data["message"]);
@@ -46,7 +47,8 @@ const Dtale = () => {
 		};
 		try {
 			const response = await axios.post(
-				"http://127.0.0.1:5000/kill-dtale-instance" +
+				import.meta.env.VITE_BACKEND_BASE_URL +
+					"/kill-dtale-instance" +
 					"?" +
 					new URLSearchParams(params).toString()
 			);

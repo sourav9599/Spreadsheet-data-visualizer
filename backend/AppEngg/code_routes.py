@@ -4,7 +4,6 @@ from tinydb import TinyDB, Query
 import openai
 import datetime
 
-openai.api_key = "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"
 # Set the daily limit and reset time
 MAX_TOKENS_PER_DAY = 1000
 tiny_db = TinyDB('db.json')
@@ -26,14 +25,19 @@ def check_token_limit():
 
 @app.route("/chatgpt", methods=['POST'])
 def generate_code():
-    prompt = request.get_json(force=True)['question']
+    openai.api_key = request.args.get('key')
+    question = request.get_json(force=True)['question']
     ignore_hint = request.args.get('ignore_hint')
+    programming_language = request.args.get('lang')
+    technology = request.args.get('tech')
+    prompt = f"{programming_language} code that {question} in {technology}"
+    
     # Check if a result already exists for the given input text
     if ignore_hint == "false":
         search = Query()
         result = search_metadata.search(search.input_text == prompt)
         if result:
-            return jsonify({'input_text': result[0]['input_text'], 'hint': result[0]['response_text'], 'time': result[0]['time']})
+            return jsonify({'input_text': result[0]['input_text'], 'hint': result[0]['response_text'], 'time': result[0]['time'], 'tokens_used': 0})
 
     token_limit = check_token_limit()
     print(token_limit)
@@ -63,7 +67,7 @@ def generate_code():
         tokens_metadata.insert({'date': today, 'tokens_used': response["usage"]['total_tokens']})
     else:
         tokens_metadata.update({'tokens_used': result[0]['tokens_used'] + response["usage"]['total_tokens']},
-                               usage.date == today)
+                                usage.date == today)
 
     search = Query()
     search_result = search_metadata.search(search.input_text == prompt)
@@ -72,7 +76,7 @@ def generate_code():
     else:
         search_metadata.insert({'input_text': prompt, 'response_text': response.choices[0].text.strip(), "time": datetime.datetime.now().strftime("%B %d, %Y at %H:%M:%S")})
 
-    return {"answer": response.choices[0].text.strip()}
+    return {"answer": response.choices[0].text.strip(), 'tokens_used': response["usage"]['total_tokens']}
 
 # @app.route("/chatgpt", methods=['POST'])
 # def describe_data():
